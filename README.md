@@ -10,7 +10,7 @@ We are visualizing frequencies of genome regions in the BED files using a web fr
 
 ## Table of Contents
 * Installation Instructions
-* Testing Data
+* Our Data
 * Credits
 
  **_NOTE:_**  All citation and resources are located in the Credits.md file
