@@ -1,5 +1,8 @@
 import os
 
+# Define the source directory containing the BED files
+source_dir = '/Users/jung/Documents/GitHub/ecDNA_filter_map/ecDNAbedfiles'  # Replace with the path to your ecDNAbedfiles directory
+
 '''
 Function: This is our function to keep track of the min starting point and the maximum ending point
 '''
@@ -39,13 +42,37 @@ def process_files(directory):
                     update_min_max(chromosome_dict[chromosome], start, end)
     return chromosome_dict
 
+'''
+Function: This function allows us to update the intervals with counts from BED files
+'''
+def update_intervals_from_bed(filepath):
+    countchromone=0
+    with open(filepath, 'r') as file:
+        for line in file:
+            columns = line.strip().split('\t')
+            chrom = columns[0]
+            start = int(columns[1])
+            end = int(columns[2])
+            if chrom in intervals_dict:
+                index = ((end - start) // interval_length) - 1
+                if index<len(intervals_dict[chrom]):
+                    intervals_dict[chrom][index][1] += 1
+        return countchromone  
+    
+    
+# Iterate through each file in the source directory
+count=0
+for filename in os.listdir(source_dir):
+    if filename.endswith('.bed'):
+        filepath = os.path.join(source_dir, filename)
+        count += update_intervals_from_bed(filepath)
+
 # Example usage
-directory = '/Users/jung/Documents/GitHub/ecDNA_filter_map/ecDNAbedfiles'  # Replace with your actual directory path
-chromosome_dict = process_files(directory)
+chromosome_dict = process_files(source_dir)
 #print(chromosome_dict)
 
 # Define the interval length
-interval_length = 1000000
+interval_length = 5000000
 
 # Initialize the dictionary
 intervals_dict = {}
@@ -61,50 +88,11 @@ def initialize_intervals(start, end, interval_length):
 for chrom, (start, end) in chromosome_dict.items():
     intervals_dict[chrom] = initialize_intervals(start-1, end+1, interval_length)
 
-# Print the initialized dictionary
-#print(intervals_dict['chr22'])
-#print(len(intervals_dict['chr22']))
-#for chrom, intervals in intervals_dict.items():
- #   print(f"{chrom}: {intervals}")
-
-#==================================================
-
-# Define the source directory containing the BED files
-source_dir = '/Users/jung/Documents/GitHub/ecDNA_filter_map/ecDNAbedfiles'  # Replace with the path to your ecDNAbedfiles directory
-
-# Define the interval length
-interval_length = 1000000
-
-# Function to update the intervals with counts from BED files
-def update_intervals_from_bed(filepath):
-    countchromone=0
-    with open(filepath, 'r') as file:
-        for line in file:
-            columns = line.strip().split('\t')
-            chrom = columns[0]
-            start = int(columns[1])
-            end = int(columns[2])
-            if chrom in intervals_dict:
-                index = ((end - start) // interval_length) - 1
-                if index<len(intervals_dict[chrom]):
-                    intervals_dict[chrom][index][1] += 1
-        return countchromone  
-# Iterate through each file in the source directory
-count=0
-for filename in os.listdir(source_dir):
-    if filename.endswith('.bed'):
-        filepath = os.path.join(source_dir, filename)
-        count += update_intervals_from_bed(filepath)
-
-# Example to print the updated intervals dictionary for a specific chromosome
-#print(intervals_dict['chr22'])
-#print(len(intervals_dict['chr22']))
-
 '''
 This is our code to write our frequencymatrix into a new file
 '''
 # Define the output file path
-output_file = 'frequency_matrix.txt'
+output_file = 'frequency_matrix_5mil.txt'
 
 # Function to write intervals_dict to a file
 def write_intervals_to_file(output_file, intervals_dict):
