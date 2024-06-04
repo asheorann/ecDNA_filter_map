@@ -48,7 +48,7 @@ chromosome_dict = process_files(directory)
 #print(chromosome_dict)
 
 # Define the interval length
-interval_length = 50000
+interval_length = 250000
 
 # Initialize the dictionary
 intervals_dict = {}
@@ -79,10 +79,10 @@ for chrom, (start, end) in chromosome_dict.items():
 source_dir = '/Users/anush/OneDrive/Documents/uni2023to2024/spring!/cse_182/ecDNAbedfiles'  # Replace with the path to your ecDNAbedfiles directory
 
 # Define the interval length
-interval_length = 50000
+interval_length = 250000
 
 # Function to update the intervals with counts from BED files
-def update_intervals_from_bed(filepath):
+def update_intervals_from_bed(filepath, chromosome_dict):
     countchromone=0
     with open(filepath, 'r') as file:
         for line in file:
@@ -93,7 +93,7 @@ def update_intervals_from_bed(filepath):
             start = int(columns[1])
             end = int(columns[2])
             if chrom in intervals_dict:
-                index = ((end-start) // interval_length)
+                index = ((start-chromosome_dict[chrom][0]) // interval_length)
                 #if index<len(intervals_dict[chrom]):
                 intervals_dict[chrom][index][1] += 1
                 #if chrom=='chr1' and index>len(intervals_dict[chrom]):
@@ -105,7 +105,7 @@ count=0
 for filename in os.listdir(source_dir):
     if filename.endswith('.bed'):
         filepath = os.path.join(source_dir, filename)
-        count += update_intervals_from_bed(filepath)
+        count += update_intervals_from_bed(filepath, chromosome_dict)
 print("total count", count)
 
 # Example to print the updated intervals dictionary for a specific chromosome
@@ -116,7 +116,7 @@ print("total count", count)
 This is our code to write our frequencymatrix into a new file
 '''
 # Define the output file path
-output_file = 'frequency_matrix_50k'
+output_file = 'frequency_matrix_250k_new'
 
 # Function to write intervals_dict to a file
 def write_intervals_to_file(output_file, intervals_dict):
