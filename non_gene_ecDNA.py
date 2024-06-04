@@ -31,13 +31,15 @@ def load_genes(filename):
 # Function to check if a gene overlaps with an ecDNA
 # Returns True if there is overlap, returns False if not
 def check_overlap(gene_start, gene_end, ec_start, ec_end):
-    if gene_start >= ec_start or gene_end <= ec_end:
+    if gene_start >= ec_start and gene_start <= ec_end:
+        return True
+    elif gene_end >= ec_start and gene_end <= ec_end:
         return True
     else:
         return False
 
 # Load the filtered ecDNA rows
-ecDNA_file = 'filtered_ecDNA_rows.txt' # change relative path if needed
+ecDNA_file = 'filtered_ecDNA_rows' # change relative path if needed
 ecDNAs = load_ecDNA(ecDNA_file)
 
 # Load the gene file
