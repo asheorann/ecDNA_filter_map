@@ -22,9 +22,10 @@ def load_genes(filename):
         next(f)
         for line in f:
             row = line.strip().split('\t')
+            chrom = row[1]
             start = int(row[3])
             end = int(row[4])
-            genes.append((start, end))
+            genes.append((chrom, start, end))
     return genes
 
 # Function to check if a gene overlaps with an ecDNA
@@ -50,17 +51,22 @@ output_file = 'non_gene_ecDNA_rows'
 with open(output_file, 'w') as outfile:
     # Iterate through each ecDNA, only keep if doesn't have any overlapping genes
     for ecDNA in ecDNAs:
+        ec_chrom = ecDNA[0]
         ec_start = ecDNA[1]
         ec_end = ecDNA[2]
         # var to keep track of if there is ever an overlap
         overlap = False
         for gene in genes:
-            gene_start = gene[0]
-            gene_end = gene[1]
-            if check_overlap(gene_start, gene_end, ec_start, ec_end) == True:
-                break
-    # if there was never an overlap -> keep this ecDNA
-    if overlap == False:
-        # Convert ecDNA tuple to tab-delimited string
-        ecDNA = '\t'.join(map(str, ecDNA))
-        outfile.write(ecDNA)
+            gene_chrom = gene[0]
+            # only check for overlaps with genes in the same chromosome
+            if gene_chrom == ec_chrom:
+                gene_start = gene[1]
+                gene_end = gene[2]
+                if check_overlap(gene_start, gene_end, ec_start, ec_end) == True:
+                    overlap = True
+                    break
+        # if there was never an overlap -> keep this ecDNA
+        if overlap == False:
+            # Convert ecDNA tuple to tab-delimited string
+            ecDNA = '\t'.join(map(str, ecDNA))
+            outfile.write(f"{ecDNA}\n")
