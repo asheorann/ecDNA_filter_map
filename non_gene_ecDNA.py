@@ -39,7 +39,7 @@ def check_overlap(gene_start, gene_end, ec_start, ec_end):
         return False
 
 # Load the filtered ecDNA rows
-ecDNA_file = 'filtered_ecDNA_rows' # change relative path if needed
+ecDNA_file = 'combined_bed_file.bed' # change relative path if needed
 ecDNAs = load_ecDNA(ecDNA_file)
 
 # Load the gene file
@@ -47,7 +47,7 @@ genes_file = 'ucsc_genes.txt' # change relative path if needed
 genes = load_genes(genes_file)
 
 # Output file for filtered intervals
-output_file = 'non_gene_ecDNA_rows'
+output_file = 'all_non_gene_ecDNA_rows'
 
 # Open the output file
 with open(output_file, 'w') as outfile:
